@@ -1,0 +1,6 @@
+#network to contain all resources. Contains custom subnets.
+resources:
+- name: {{ env["name"] }}-custom-net
+  type: compute.v1.network
+  properties:
+    autoCreateSubnetworks: false

@@ -1,0 +1,28 @@
+#Properties based on: Google Cloud (2021) DatabaseInstance Documentation. Available at: https://cloud.google.com/sql/docs/mysql/admin-api/rest/v1beta4/instances . Last accessed 13 April 2021.
+
+info:
+  title: Sql schema
+  author: Oakleigh
+  description: Creates an SQL instance and attaches a database.
+  version: 1.0
+
+imports:
+- path: sqladmin.jinja
+
+properties:
+  settings.tier:
+    default: db-g1-small
+    type: string
+    description: The machine type to use for instances that are created from these properties.
+
+  instance:
+    type: string
+    description: The name of the Cloud SQL instance.
+
+  charset:
+    type: string
+    description: The Cloud SQL charset value.
+
+  collation:
+    type: string
+    description: The Cloud SQL collation value.

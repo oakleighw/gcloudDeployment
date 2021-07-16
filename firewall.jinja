@@ -1,0 +1,11 @@
+#Code based on: shuainie-google (2018) firewall.jinja, deploymentmanager-samples, Github. Available at: https://github.com/GoogleCloudPlatform/deploymentmanager-samples/blob/master/google/resource-snippets/compute-v1/firewall.jinja . Last accessed 13 April 2021.
+#firewall which allows http, rdp and ssh traffic ingress.
+resources:
+- name: firewall-{{ env["deployment"] }}
+  type: compute.v1.firewall
+  properties:
+    network: {{ properties["network"] }}
+    sourceRanges: ["0.0.0.0/0"]
+    allowed:
+    - IPProtocol: TCP
+      ports: ["80","3389","22"]

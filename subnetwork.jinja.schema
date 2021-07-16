@@ -1,0 +1,26 @@
+#Properties based on: Google Cloud (2021) Subnetworks Documentation. Available at: https://cloud.google.com/compute/docs/reference/rest/v1/subnetworks . Last accessed 13 April 2021.
+info:
+  title: Subnetwork schema
+  author: Oakleigh
+  description: Creates a subnetwork to modularise resources together.
+  version: 1.0
+
+imports:
+- path: subnetwork.jinja
+
+required:
+- network
+- region
+
+properties:
+  ipCidrRange:
+    type: string
+    description: The range of internal addresses that are owned by this subnetwork.
+
+  network:
+    type: string
+    description: The URL of the network to which this subnetwork belongs.
+
+  region:
+    type: string
+    description: URL of the region where the Subnetwork resides.

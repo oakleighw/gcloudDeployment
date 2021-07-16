@@ -1,0 +1,75 @@
+#Code based on: Kevin Emery (2018) vpn_tunnel.jinja, deploymentmanager-samples, Github. Available at: https://github.com/GoogleCloudPlatform/deploymentmanager-samples/blob/master/google/resource-snippets/compute-v1/vpn_tunnel.jinja . Last accessed 13 April 2021.
+
+#sets vpn gateway name
+{% set VPN_GATEWAY = "vpn-gateway-" + env["deployment"] %}
+
+resources:
+#Vpn gateway; sends traffic between VPC and external systems.
+- name: {{VPN_GATEWAY}}
+  type: gcp-types/compute-v1:targetVpnGateways
+  properties:
+    region: {{ properties["region"] }}
+    network: {{ properties["network"] }}
+
+#generates vpn IP
+- name: vpn-ip-{{ env["deployment"] }}
+  type: gcp-types/compute-v1:addresses
+  properties:
+    region: {{ properties["region"] }}
+
+#sets ESP forwarding rule; encapsulates packets
+- name: vpn-esp-rule-{{ env["deployment"] }}
+  type: gcp-types/compute-v1:forwardingRules
+  properties:
+    IPProtocol: ESP
+    IPAddress: $(ref.vpn-ip-{{ env["deployment"] }}.address)
+    region: {{ properties["region"] }}
+    target: $(ref.{{VPN_GATEWAY}}.selfLink)
+
+#sets UDP 500 forwarding; used for establishing VPN tunnel
+- name: vpn-udp500-rule-{{ env["deployment"] }}
+  type: gcp-types/compute-v1:forwardingRules
+  properties:
+    IPProtocol: UDP
+    IPAddress: $(ref.vpn-ip-{{ env["deployment"] }}.address)
+    portRange: 500
+    region: {{ properties["region"] }}
+    target: $(ref.{{VPN_GATEWAY}}.selfLink)
+
+#sets UDP 4500 rule; works with ESP rule.
+- name: vpn-udp4500-rule-{{ env["deployment"] }}
+  type: gcp-types/compute-v1:forwardingRules
+  properties:
+    IPProtocol: UDP
+    IPAddress: $(ref.vpn-ip-{{ env["deployment"] }}.address)
+    portRange: 4500
+    region: {{ properties["region"] }}
+    target: $(ref.{{VPN_GATEWAY}}.selfLink)
+
+#Vpn tunnel; encrypts links between VPC and external systems.
+- name: oak-vpn-tunnel
+  type: gcp-types/compute-v1:vpnTunnels
+  properties:
+    region: {{ properties["region"] }}
+    ikeVersion: 2
+    sharedSecret: {{ properties["sharedSecret"] }}
+    peerIp: {{ properties["peerIp"] }}
+    targetVpnGateway: $(ref.{{VPN_GATEWAY}}.selfLink)
+    localTrafficSelector:
+    - 192.168.0.0/16
+#Dependancies allow forwarding rules to be established before VPN tunnel
+  metadata:
+    dependsOn:
+    - vpn-esp-rule-{{ env["deployment"] }}
+    - vpn-udp500-rule-{{ env["deployment"] }}
+    - vpn-udp4500-rule-{{ env["deployment"] }}
+
+#route that routes to vpn tunnel
+- name: vpn-route-{{ env["deployment"] }}
+  type: gcp-types/compute-v1:routes
+  properties:
+    destRange: {{ properties["destRange"] }}
+    nextHopVpnTunnel: $(ref.oak-vpn-tunnel.selfLink)
+    network: {{ properties["network"] }}
+    priority: {{ properties["priority"] }}
+

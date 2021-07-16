@@ -1,0 +1,39 @@
+#Properties based on: Google Cloud (2021) instanceGroupManagers Documentation. Available at: https://cloud.google.com/compute/docs/reference/rest/beta/instanceGroupManagers . Last accessed 13 April 2021.
+info:
+  title: instance group schema
+  author: Oakleigh
+  description: creates a managed instance group to contain instance templates. Autoscales.
+  version: 1.0
+
+imports:
+- path: instanceGroup.jinja
+
+required:
+- zone
+- autoscalingPolicy.maxNumReplicas
+
+properties:
+  instanceTemplate:
+    type: string
+    description: Adds an instance to the instance group.
+
+  zone:
+    type: string
+    description: The URL of the zone where the instance group is located.
+
+  targetSize:
+    type: object
+    description: Specifies the intended number of instances to be created from the instanceTemplate.
+
+
+  target:
+    type: string
+    description: URL of the managed instance group that this autoscaler will scale.
+
+  autoscalingPolicy:
+    type: object
+    description: The configuration parameters for the autoscaling algorithm.
+
+  autoscalingPolicy.maxNumReplicas:
+    type: integer
+    description: The maximum number of instances that the autoscaler can scale out to.

@@ -1,0 +1,17 @@
+#Code based on: Google Cloud Documentation (2021) Creating an HTTP load-balanced logbook app. Available at: https://cloud.google.com/deployment-manager/docs/create-advanced-http-load-balanced-deployment. Last accessed 13 April 2021.
+resources:
+
+#health check which checks the health of http instances
+- name: {{ env["name"] }}-hc
+  type: compute.v1.httpHealthCheck
+  properties:
+    port: {{ properties["port"] }}
+    requestPath: /_ah/health
+
+#backendservice which load balances http requests to the healthiest instance group based on health check.
+- name: {{ env["name"] }}-bes
+  type: compute.v1.backendService
+  properties:
+    port: {{ properties["port"] }}
+    backends: {{ properties["backends"] }}
+    healthChecks: [ $(ref.{{ env["name"] }}-hc.selfLink) ]

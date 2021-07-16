@@ -1,0 +1,25 @@
+#Properties based on: Google Cloud (2021) Firewalls Documentation. Available at: https://cloud.google.com/compute/docs/reference/rest/v1/firewalls . Last accessed 13 April 2021.
+info:
+  title: Firewall schema
+  author: Oakleigh
+  description: Creates a firewall at the custom network. Allows http,ssh,rdp traffic Ingress.
+  version: 1.0
+
+imports:
+- path: firewall.jinja
+
+required:
+- network
+
+properties:
+  network:
+    type: string
+    description: URL of the network resource for this firewall rule.
+
+  sourceRanges:
+    type: string
+    description: The firewall rule applies only to traffic that has a source IP address in these ranges.
+
+  allowed:
+    type: object
+    description: The list of ALLOW rules specified by this firewall. A protocol and port-range tuple.

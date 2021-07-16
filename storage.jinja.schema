@@ -1,0 +1,18 @@
+#Properties based on: Google Cloud (2021) Buckets Documentation. Available at: https://cloud.google.com/storage/docs/json_api/v1/buckets . Last accessed 13 April 2021.
+info:
+  title: Storage template schema
+  author: Oakleigh
+  description: creates bucket storage for static content e.g. web images
+  version: 1.0
+
+imports:
+- path: storage.jinja
+
+properties:
+  predefinedAcl:
+    type: string
+    description: Specifies initial access control on the bucket.
+
+  zone:
+    type: string
+    description: URL of the zone where the bucket resides.

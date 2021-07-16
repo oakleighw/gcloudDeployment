@@ -1,0 +1,31 @@
+#Properties based on: Google Cloud (2021) Buckets Documentation. Available at: https://cloud.google.com/compute/docs/reference/rest/beta/backendServices . Last accessed 13 April 2021.
+info:
+  title: http health load balancing services schema
+  author: Oakleigh
+  description: Determines which instance group to route http requests to based on http health.
+  version: 1.0
+
+imports:
+- path: service.jinja
+
+required:
+- healthchecks
+- backends
+
+properties:
+  port:
+    default: 80
+    type: integer
+    description: The TCP port number for the HTTP health check request.
+
+  requestPath:
+    type: string
+    description: The request path of the HTTP health check request.
+
+  backends:
+    type: object
+    description: The list of backends that serve this BackendService.
+
+  healthchecks:
+    type: string
+    description: The list of URLs to the healthChecks resource for health checking this backend service.

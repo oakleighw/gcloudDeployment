@@ -1,0 +1,8 @@
+resources:
+#subnetwork to contain seperate instance groups. To be deployed in different regions.
+- name: custom-subnet-{{ env["name"] }}
+  type: compute.v1.subnetwork
+  properties:
+    ipCidrRange: {{ properties["ipCidrRange"] }}
+    network: {{ properties["network"] }}
+    region: {{ properties["region"] }}

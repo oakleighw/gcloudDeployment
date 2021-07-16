@@ -1,0 +1,24 @@
+#Properties based on: Google Cloud (2021) instanceTemplates Documentation. Available at: https://cloud.google.com/compute/docs/reference/rest/beta/instanceTemplates . Last accessed 13 April 2021.
+info:
+  title: instance template schema
+  author: Oakleigh
+  description: creates a vm instance to be contained within an instance group.
+  version: 1.0
+
+imports:
+- path: instanceTemplate.jinja
+
+
+properties:
+  machineType:
+    default: n1-standard-1
+    type: string
+    description: The machine type to use for instances that are created from these properties.
+
+  disks:
+    type: string
+    description: The disk that is associated with the instances that are created from these properties.
+
+  networkInterfaces:
+    type: string
+    description: An array of network access configurations for this interface.

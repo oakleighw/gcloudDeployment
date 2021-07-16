@@ -1,0 +1,19 @@
+#sets database name
+{% set DATABASE1 = "helloworlddb" %}
+
+#instance of sql admin to hold database
+resources:
+- name: {{ env["name"] }}sql
+  type: sqladmin.v1beta4.instance
+  properties:
+    settings:
+      tier: {{ properties['tier'] }}
+
+#database contained within instance
+- name: {{ DATABASE1 }}
+  type: sqladmin.v1beta4.database
+  properties:
+    name: {{ DATABASE1 }}
+    instance: $(ref.{{ env["name"] }}sql.name)
+    charset: utf8
+    collation: utf8_general_ci

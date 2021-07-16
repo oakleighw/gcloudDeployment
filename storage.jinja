@@ -1,0 +1,7 @@
+#creates bucket storage for static content e.g. web images. Publicly readable by default.
+resources:
+- name: {{ env["name"] }}bucket
+  type: storage.v1.bucket
+  properties:
+    predefinedAcl: publicRead
+    zone: europe-west2-c

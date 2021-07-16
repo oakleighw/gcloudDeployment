@@ -1,0 +1,103 @@
+#paths to jinja files
+imports:
+- path: storage.jinja
+- path: sqladmin.jinja
+- path: network.jinja
+- path: subnetwork.jinja
+- path: firewall.jinja
+- path: instanceGroup.jinja
+- path: instanceTemplate.jinja
+- path: vpnTunnel.jinja
+- path: service.jinja
+
+resources:
+#storage for static content e.g. web images
+- name: oakleigh2
+  type: storage.jinja
+
+#storage for dynamic content e.g. customer data
+- name: sqladminfinal
+  type: sqladmin.jinja
+  properties:
+    tier: db-g1-small
+#custom network to contain custom subnetworks
+- name: mobile-shop-net #-custom-net
+  type: network.jinja
+
+#custom firewall for network. Allows http,ssh,rdp traffic Ingress.
+- name: custom-firewall
+  type: firewall.jinja
+  properties:
+    network: $(ref.mobile-shop-net-custom-net.selfLink)
+
+#VPN Tunnel for the custom network; also includes VPN Gateway, forwarding rules and routing
+- name: oak-vpn-tunnel
+  type: vpnTunnel.jinja
+  properties:
+    region: europe-west1
+    sharedSecret: compSciLincoln
+    peerIp: 1.2.3.4
+    network: $(ref.mobile-shop-net-custom-net.selfLink)
+    priority: 1000
+    destRange: 192.168.0.0
+
+#===europe-west1 instance group & dependancies===
+
+#subnet for primary instance group
+- name: ewest1-net #(custom-subnet-ewest1-net)
+  type: subnetwork.jinja
+  properties:
+    ipCidrRange: 10.10.0.0/16
+    network: $(ref.mobile-shop-net-custom-net.selfLink)
+    region: europe-west1
+
+#primary instance group with autoscaling
+- name: europe-west1-vms #-instance-group
+  type: instanceGroup.jinja
+  properties:
+    zone: europe-west1-b
+    instanceTemplate: $(ref.ewest1-vm-instance-template.selfLink)
+
+#template for primary instance group
+- name: ewest1-vm #-instance-template
+  type: instanceTemplate.jinja
+  properties:
+    network: $(ref.custom-subnet-ewest1-net.network)
+    
+#===europe-west2 instance group & dependancies===
+
+- name: ewest2-net #(custom-subnet-ewest2-net)
+  type: subnetwork.jinja
+  properties:
+    ipCidrRange: 10.11.0.0/16
+    network: $(ref.mobile-shop-net-custom-net.selfLink)
+    region: europe-west2
+
+#secondary instance group with autoscaling
+- name: europe-west2-vms #-instance-group
+  type: instanceGroup.jinja
+  properties:
+    zone: europe-west2-b
+    instanceTemplate: $(ref.ewest2-vm-instance-template.selfLink)
+
+- name: ewest2-vm #-instance-template
+  type: instanceTemplate.jinja
+  properties:
+    network: $(ref.custom-subnet-ewest2-net.network)
+
+#load balancer that routes requests only to the healthy http instance group
+- name: service
+  type: service.jinja
+  properties:
+    port: 80
+    backends:
+      - name: primary-service
+        group: $(ref.europe-west1-vms-instance-group.instanceGroup)
+      - name: secondary-service
+        group: $(ref.europe-west2-vms-instance-group.instanceGroup)
+  metadata:
+    dependsOn:
+    - ewest1-vm-instance-template
+    - ewest2-vm-instance-template
+    - europe-west1-vms-instance-group
+    - europe-west2-vms-instance-group

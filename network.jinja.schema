@@ -1,0 +1,15 @@
+#Properties based on: Google Cloud (2021) Networks Documentation. Available at: https://cloud.google.com/compute/docs/reference/rest/v1/networks . Last accessed 13 April 2021.
+info:
+  title: Network schema
+  author: Oakleigh
+  description: Creates a custom network for resources.
+  version: 1.0
+
+imports:
+- path: network.jinja
+
+
+properties:
+  autoCreateSubnetworks:
+    type: boolean
+    description: When set to true, the VPC network is created in auto mode. When set to false, the VPC network is created in custom mode.

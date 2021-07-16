@@ -1,0 +1,19 @@
+#Code based on: Google Cloud Documentation (2021) Creating an HTTP load-balanced logbook app. Available at: https://cloud.google.com/deployment-manager/docs/create-advanced-http-load-balanced-deployment. Last accessed 13 April 2021.
+resources:
+ 
+ #instance group to contain vm instance templates. Created with 1 instance. To be deployed if different region zones.
+- name: {{ env["name"] }}-instance-group
+  type: compute.v1.instanceGroupManager
+  properties:
+    instanceTemplate: {{ properties['instanceTemplate'] }}
+    zone: {{ properties["zone"] }}
+    targetSize: 1
+
+#autoscaler which can scale the instance group to contain up to 3 instances
+- name: {{ env["name"] }}-as
+  type: compute.v1.autoscaler
+  properties:
+    zone: {{ properties["zone"] }}
+    target: $(ref.{{ env["name"] }}-instance-group.selfLink)
+    autoscalingPolicy:
+      maxNumReplicas: 3

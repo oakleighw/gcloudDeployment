@@ -1,0 +1,70 @@
+#Properties based on: Google Cloud (2021) vpnTunnels Documentation. Available at: https://cloud.google.com/compute/docs/reference/rest/v1/vpnTunnels . Last accessed 13 April 2021.
+info:
+  title: VPN Schema
+  author: Oakleigh
+  description: Creates a Global VPN Gateway and Tunnel, along with relevant forwarding rules, IP addressing and route.
+  version: 1.0
+
+imports:
+- path: vpnTunnel.jinja
+
+required:
+- region
+- network
+- targetVpnGateway
+- nextHopVpnTunnel
+
+properties:
+  region:
+    type: string
+    description: URL of the region where the VPN tunnel resides.
+
+  network:
+    type: string
+    description: URL of the network to which the VPN gateway is attached
+
+  ikeVersion:
+    type: integer
+    default: 2
+    description: IKE protocol version to use when establishing the VPN tunnel with the peer VPN gateway. Acceptable IKE versions are 1 or 2.
+
+  sharedSecret:
+    type: string
+    description: Shared secret used to set the secure session between the Cloud VPN gateway and the peer VPN gateway.
+
+  peerIp:
+    type: string
+    description: IPv4 address of the peer VPN gateway
+
+  targetVpnGateway:
+    type: string
+    description: URL of the Target VPN gateway with which this VPN tunnel is associated.
+
+  localTrafficSelector:
+    type: string
+    description: Local traffic selector to use when establishing the VPN tunnel with the peer VPN gateway. IPv4 formatted as a CIDR formatted string.
+
+  IPProtocol:
+    type: string
+    description: For protocol forwarding, either TCP, UDP, ESP, AH, SCTP or ICMP.
+
+  IPAddress:
+    type: string
+    description: IP address that the forwarding rule serves.
+
+  portRange:
+    type: integer
+    default: 4500
+    description: VPN forwarding rule forwards packets to targetVpnGateway port.
+
+  destRange:
+    type: string
+    description: The destination range of outgoing packets that the route applies to.
+
+  nextHopVpnTunnel:
+    type: string
+    description: The URL to the VpnTunnel that handles matching packets.
+
+  priority:
+    type: integer
+    description: The priority of the route.
